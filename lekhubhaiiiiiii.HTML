@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flemisitt AI Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+      display: flex;
+      justify-content: center;
+      padding-top: 50px;
+    }
+
+    #chat-container {
+      width: 450px;
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #title {
+      font-size: 36px;
+      font-style: italic;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    #subtitle {
+      font-size: 16px;
+      color: #555;
+      margin-bottom: 20px;
+    }
+
+    #chat-box {
+      height: 350px;
+      overflow-y: auto;
+      width: 100%;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 10px;
+      background: #fafafa;
+      margin-bottom: 10px;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .message {
+      margin: 5px 0;
+      padding: 5px 10px;
+      border-radius: 8px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+
+    .user {
+      background-color: #0078d7;
+      color: white;
+      align-self: flex-end;
+    }
+
+    .bot {
+      background-color: #e5e5e5;
+      color: #333;
+      align-self: flex-start;
+    }
+
+    #input-area {
+      display: flex;
+      width: 100%;
+      gap: 5px;
+    }
+
+    #user-input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    #send-btn {
+      padding: 10px 15px;
+      border-radius: 8px;
+      border: none;
+      background-color: #0078d7;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    #send-btn:hover {
+      background-color: #005fa3;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat-container">
+    <div id="title">Flemisitt</div>
+    <div id="subtitle">Flemisitt.AI</div>
+
+    <div id="chat-box"></div>
+
+    <div id="input-area">
+      <input type="text" id="user-input" placeholder="Type your message..." />
+      <button id="send-btn">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById("chat-box");
+    const userInput = document.getElementById("user-input");
+    const sendBtn = document.getElementById("send-btn");
+
+    // --- Conversational responses ---
+    const responses = {
+      "hi": ["Hello!", "Hey there!", "Hi! How can I help you?"],
+      "how are you": ["I'm fine, thanks!", "Doing great!", "All good here."],
+      "your name": ["I'm Flemisitt, your friendly chatbot!", "You can call me Flemisitt.AI!"],
+      "bye": ["Goodbye!", "See you later!", "Take care!"]
+    };
+
+    // --- Universal truths ---
+    const facts = {
+      "is the earth flat": "No, the Earth is round.",
+      "is the sun a star": "Yes, the Sun is a star.",
+      "is water wet": "Yes, water is wet.",
+      "is fire hot": "Yes, fire is hot.",
+      "is 0 greater than 1": "No, 0 is less than 1.",
+      "does the earth revolve around the sun": "Yes, the Earth revolves around the Sun."
+    };
+
+    function addMessage(sender, text) {
+      const msg = document.createElement("div");
+      msg.classList.add("message", sender);
+      msg.textContent = text;
+      chatBox.appendChild(msg);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function getBotReply(input) {
+      input = input.toLowerCase().trim();
+
+      // 1️⃣ Check universal truths
+      for (let key in facts) {
+        if (input.includes(key)) {
+          return facts[key];
+        }
+      }
+
+      // 2️⃣ Check predefined responses
+      for (let key in responses) {
+        if (input.includes(key)) {
+          return responses[key][Math.floor(Math.random() * responses[key].length)];
+        }
+      }
+
+      // 3️⃣ Check simple math
+      if (/^[0-9+\-*/(). ]+$/.test(input)) {
+        try {
+          const result = eval(input);
+          return `The answer is ${result}`;
+        } catch (e) {
+          return "I couldn't calculate that. Make sure it's a valid math expression.";
+        }
+      }
+
+      // 4️⃣ Fallback
+      return "Sorry, I didn't understand that. I can chat, solve math, and answer basic facts!";
+    }
+
+    function sendMessage() {
+      const message = userInput.value.trim();
+      if (message === "") return;
+      addMessage("user", message);
+      userInput.value = "";
+      const reply = getBotReply(message);
+      setTimeout(() => addMessage("bot", reply), 300);
+    }
+
+    sendBtn.addEventListener("click", sendMessage);
+    userInput.addEventListener("keypress", e => { if(e.key === "Enter") sendMessage(); });
+
+    // --- Welcome message ---
+    addMessage("bot", "Hello! I am Flemisitt.AI. I can chat, solve math like 2+3, and answer basic universal truths like 'Is the Earth flat?'. Type 'bye' to exit.");
+  </script>
+</body>
+</html>
